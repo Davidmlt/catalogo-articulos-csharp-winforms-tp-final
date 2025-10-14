@@ -63,7 +63,7 @@ namespace presentacion
             {
                 pbUrlImagen.Load(imagen);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 pbUrlImagen.Load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmNYw9e9Y7rhqAKRQ3Lv7pFw0JJWdXj13WJA&s");
             }
