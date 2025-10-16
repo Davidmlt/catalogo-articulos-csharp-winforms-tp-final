@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Configuration;
 using dominio;
 using negocio;
 
@@ -15,6 +17,7 @@ namespace presentacion
     public partial class frmAltaArticulo : Form
     {
         private Articulo articulo = null;
+        private OpenFileDialog archivo = null;
         public frmAltaArticulo()
         {
             InitializeComponent();
@@ -95,6 +98,11 @@ namespace presentacion
                     negocio.agregar(articulo);
                     MessageBox.Show("Agregado Exitosamente");
                 }
+
+                if (archivo != null && !(txtImagenUrl.Text.ToUpper().Contains("HTTP")))
+                {
+                    File.Copy(archivo.FileName, ConfigurationManager.AppSettings["images-articles"] + archivo.SafeFileName);
+                }
                 Close();
             }
             catch (Exception ex)
@@ -112,6 +120,24 @@ namespace presentacion
         private void txtImagenUrl_Leave(object sender, EventArgs e)
         {
             cargarImagen(txtImagenUrl.Text); 
+        }
+
+        private void btnGuardarImagen_Click(object sender, EventArgs e)
+        {
+            archivo = new OpenFileDialog();
+            try
+            {
+                archivo.Filter = "jpg|*.jpg;|png|*.png";
+                if (archivo.ShowDialog() == DialogResult.OK)
+                {
+                    txtImagenUrl.Text = archivo.FileName;
+                    cargarImagen(archivo.FileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
     }
 }
