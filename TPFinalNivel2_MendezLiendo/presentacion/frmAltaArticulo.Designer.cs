@@ -45,6 +45,7 @@
             this.pbUrlImagen = new System.Windows.Forms.PictureBox();
             this.cboMarca = new System.Windows.Forms.ComboBox();
             this.cboCategoria = new System.Windows.Forms.ComboBox();
+            this.btnGuardarImagen = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbUrlImagen)).BeginInit();
             this.SuspendLayout();
             // 
@@ -130,28 +131,28 @@
             this.txtCodigo.Location = new System.Drawing.Point(100, 29);
             this.txtCodigo.Name = "txtCodigo";
             this.txtCodigo.Size = new System.Drawing.Size(149, 22);
-            this.txtCodigo.TabIndex = 7;
+            this.txtCodigo.TabIndex = 0;
             // 
             // txtNombre
             // 
             this.txtNombre.Location = new System.Drawing.Point(100, 67);
             this.txtNombre.Name = "txtNombre";
             this.txtNombre.Size = new System.Drawing.Size(149, 22);
-            this.txtNombre.TabIndex = 8;
+            this.txtNombre.TabIndex = 1;
             // 
             // txtDescripcion
             // 
             this.txtDescripcion.Location = new System.Drawing.Point(100, 98);
             this.txtDescripcion.Name = "txtDescripcion";
             this.txtDescripcion.Size = new System.Drawing.Size(149, 22);
-            this.txtDescripcion.TabIndex = 9;
+            this.txtDescripcion.TabIndex = 2;
             // 
             // txtImagenUrl
             // 
             this.txtImagenUrl.Location = new System.Drawing.Point(100, 203);
             this.txtImagenUrl.Name = "txtImagenUrl";
             this.txtImagenUrl.Size = new System.Drawing.Size(149, 22);
-            this.txtImagenUrl.TabIndex = 12;
+            this.txtImagenUrl.TabIndex = 5;
             this.txtImagenUrl.Leave += new System.EventHandler(this.txtImagenUrl_Leave);
             // 
             // txtPrecio
@@ -159,31 +160,31 @@
             this.txtPrecio.Location = new System.Drawing.Point(100, 237);
             this.txtPrecio.Name = "txtPrecio";
             this.txtPrecio.Size = new System.Drawing.Size(149, 22);
-            this.txtPrecio.TabIndex = 13;
+            this.txtPrecio.TabIndex = 7;
             // 
             // btnAceptar
             // 
-            this.btnAceptar.Location = new System.Drawing.Point(32, 286);
+            this.btnAceptar.Location = new System.Drawing.Point(9, 281);
             this.btnAceptar.Name = "btnAceptar";
             this.btnAceptar.Size = new System.Drawing.Size(75, 23);
-            this.btnAceptar.TabIndex = 14;
+            this.btnAceptar.TabIndex = 8;
             this.btnAceptar.Text = "Aceptar";
             this.btnAceptar.UseVisualStyleBackColor = true;
             this.btnAceptar.Click += new System.EventHandler(this.btnAceptar_Click);
             // 
             // btnCancelar
             // 
-            this.btnCancelar.Location = new System.Drawing.Point(136, 286);
+            this.btnCancelar.Location = new System.Drawing.Point(205, 281);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(75, 23);
-            this.btnCancelar.TabIndex = 15;
+            this.btnCancelar.TabIndex = 9;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
             this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
             // 
             // pbUrlImagen
             // 
-            this.pbUrlImagen.Location = new System.Drawing.Point(255, 29);
+            this.pbUrlImagen.Location = new System.Drawing.Point(286, 29);
             this.pbUrlImagen.Name = "pbUrlImagen";
             this.pbUrlImagen.Size = new System.Drawing.Size(268, 230);
             this.pbUrlImagen.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -197,7 +198,7 @@
             this.cboMarca.Location = new System.Drawing.Point(100, 138);
             this.cboMarca.Name = "cboMarca";
             this.cboMarca.Size = new System.Drawing.Size(149, 24);
-            this.cboMarca.TabIndex = 17;
+            this.cboMarca.TabIndex = 3;
             // 
             // cboCategoria
             // 
@@ -206,13 +207,24 @@
             this.cboCategoria.Location = new System.Drawing.Point(100, 169);
             this.cboCategoria.Name = "cboCategoria";
             this.cboCategoria.Size = new System.Drawing.Size(149, 24);
-            this.cboCategoria.TabIndex = 18;
+            this.cboCategoria.TabIndex = 4;
+            // 
+            // btnGuardarImagen
+            // 
+            this.btnGuardarImagen.Location = new System.Drawing.Point(255, 202);
+            this.btnGuardarImagen.Name = "btnGuardarImagen";
+            this.btnGuardarImagen.Size = new System.Drawing.Size(25, 23);
+            this.btnGuardarImagen.TabIndex = 6;
+            this.btnGuardarImagen.Text = "+";
+            this.btnGuardarImagen.UseVisualStyleBackColor = true;
+            this.btnGuardarImagen.Click += new System.EventHandler(this.btnGuardarImagen_Click);
             // 
             // frmAltaArticulo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(521, 336);
+            this.ClientSize = new System.Drawing.Size(558, 316);
+            this.Controls.Add(this.btnGuardarImagen);
             this.Controls.Add(this.cboCategoria);
             this.Controls.Add(this.cboMarca);
             this.Controls.Add(this.pbUrlImagen);
@@ -258,5 +270,6 @@
         private System.Windows.Forms.PictureBox pbUrlImagen;
         private System.Windows.Forms.ComboBox cboMarca;
         private System.Windows.Forms.ComboBox cboCategoria;
+        private System.Windows.Forms.Button btnGuardarImagen;
     }
 }
