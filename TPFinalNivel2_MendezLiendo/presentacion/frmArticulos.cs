@@ -22,6 +22,10 @@ namespace presentacion
         private void frmArticulos_Load(object sender, EventArgs e)
         {
             cargar();
+            cbCampo.Items.Add("Nombre");
+            cbCampo.Items.Add("Precio");
+            cbCampo.Items.Add("Marca");
+            cbCampo.Items.Add("Categoria");
         }
         private void cargar()
         {
@@ -103,6 +107,43 @@ namespace presentacion
                 MessageBox.Show(ex.ToString());
             }
 
+        }
+
+        private void cbCampo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string opcion = cbCampo.SelectedItem.ToString();
+
+            if (opcion == "Precio")
+            {
+                cbCriterio.Items.Clear();
+                cbCriterio.Items.Add("Mayor a");
+                cbCriterio.Items.Add("Menor a");
+                cbCriterio.Items.Add("Igual a");
+            }
+            else
+            {
+                cbCriterio.Items.Clear();
+                cbCriterio.Items.Add("Comienza con");
+                cbCriterio.Items.Add("Termina con");
+                cbCriterio.Items.Add("Contiene");
+            }
+        }
+
+        private void btnFiltrar_Click(object sender, EventArgs e)
+        {
+            ArticuloNegocio negocio = new ArticuloNegocio();
+            try
+            {
+                string campo = cbCampo.SelectedItem.ToString();
+                string criterio = cbCriterio.SelectedItem.ToString();
+                string filtro = txtFiltro.Text;
+
+                dgvArticulos.DataSource = negocio.filtrar(campo, criterio, filtro);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
     }
 }
