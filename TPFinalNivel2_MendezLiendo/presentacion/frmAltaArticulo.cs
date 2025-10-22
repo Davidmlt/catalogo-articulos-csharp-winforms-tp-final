@@ -91,6 +91,7 @@ namespace presentacion
                 {
                     return;
                 }
+
                 articulo.MarcaArticulo = (Marca)cboMarca.SelectedItem;
                 articulo.CategoriaArticulo = (Categoria)cboCategoria.SelectedItem;
 
