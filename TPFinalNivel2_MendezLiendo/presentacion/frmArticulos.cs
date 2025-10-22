@@ -1,65 +1,48 @@
-﻿using System;
+﻿using dominio;
+using negocio;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using dominio;
-using negocio;
 namespace presentacion
 {
     public partial class frmArticulos : Form
     {
         private List<Articulo> listaArticulos;
+        private ArticuloNegocio negocio;
         public frmArticulos()
         {
             InitializeComponent();
         }
-
         private void frmArticulos_Load(object sender, EventArgs e)
         {
-            cargar();
-            cbCampo.Items.Add("Nombre");
+            negocio = new ArticuloNegocio();
+            AppHelper.cargar(negocio, dgvArticulos, ref listaArticulos, pbUrlImagen);
             cbCampo.Items.Add("Precio");
+            cbCampo.Items.Add("Nombre");
             cbCampo.Items.Add("Marca");
             cbCampo.Items.Add("Categoria");
-        }
-        private void cargar()
-        {
-            ArticuloNegocio negocio = new ArticuloNegocio();
-            try
-            {
-                listaArticulos = negocio.listar();
-                dgvArticulos.DataSource = listaArticulos;
-                cargarImagen(listaArticulos[0].ImagenUrl);
-                ocultarColumnas();
+            EstiloHelper.aplicarEstiloFormulario(
+                this, txtFiltro,
+                new[] { lblCampo, lblCriterio, lblFiltro },             
+                new[] {cbCampo, cbCriterio});
 
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
+            EstiloHelper.aplicarEstiloBotonPrincipal(btnAgregar);
+            EstiloHelper.aplicarEstiloBotonPrincipal(btnModificar);
+            EstiloHelper.aplicarEstiloBotonPrincipal(btnVerDetalle);
+            EstiloHelper.aplicarEstiloBotonPrincipal(btnActualizar);
+            EstiloHelper.aplicarEstiloBotonPrincipal(btnFiltrar);
+            EstiloHelper.aplicarEstiloBotonEliminar(btnEliminar);
 
+            EstiloHelper.aplicarEstiloDataGrid(dgvArticulos);
 
-        }
-        private void cargarImagen(string imagen)
-        {
-            try
-            {
-                pbUrlImagen.Load(imagen);
-            }
-            catch (Exception)
-            {
-                pbUrlImagen.Load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmNYw9e9Y7rhqAKRQ3Lv7pFw0JJWdXj13WJA&s");
-            }
-        }
-        private void ocultarColumnas()
-        {
-            dgvArticulos.Columns["Id"].Visible = false;
-            dgvArticulos.Columns["ImagenUrl"].Visible = false;
         }
 
         private void dgvArticulos_SelectionChanged(object sender, EventArgs e)
@@ -68,7 +51,7 @@ namespace presentacion
             if (dgvArticulos.CurrentRow != null)
             {
                 seleccionado = (Articulo)dgvArticulos.CurrentRow.DataBoundItem;
-                cargarImagen(seleccionado.ImagenUrl);
+                AppHelper.cargarImagen(seleccionado.ImagenUrl, pbUrlImagen);
             }
         }
 
@@ -76,21 +59,25 @@ namespace presentacion
         {
             frmAltaArticulo alta = new frmAltaArticulo();
             alta.ShowDialog();
-            cargar();
+            AppHelper.cargar(negocio, dgvArticulos, ref listaArticulos, pbUrlImagen);
         }
 
         private void btnModificar_Click(object sender, EventArgs e)
         {
             Articulo seleccionado;
-            seleccionado = (Articulo)dgvArticulos.CurrentRow.DataBoundItem;
-            frmAltaArticulo modificar = new frmAltaArticulo(seleccionado);
-            modificar.ShowDialog();
-            cargar();
+            if (dgvArticulos.CurrentRow != null)
+            {
+                seleccionado = (Articulo)dgvArticulos.CurrentRow.DataBoundItem;
+                frmAltaArticulo modificar = new frmAltaArticulo(seleccionado);
+                modificar.ShowDialog();
+                AppHelper.cargar(negocio, dgvArticulos, ref listaArticulos, pbUrlImagen);
+            }
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
         {
-            ArticuloNegocio negocio = new ArticuloNegocio();
+
+            negocio = new ArticuloNegocio();
             Articulo seleccionado;
             try
             {
@@ -98,9 +85,14 @@ namespace presentacion
                 if (resultado == DialogResult.Yes)
                 {
                     seleccionado = (Articulo)dgvArticulos.CurrentRow.DataBoundItem;
+
+                    if (File.Exists(AppHelper.obtenerRutaImagen(Path.GetFileName(seleccionado.ImagenUrl))))
+                    {
+                        File.Delete(AppHelper.obtenerRutaImagen(Path.GetFileName(seleccionado.ImagenUrl)));
+                    }
                     negocio.eliminar(seleccionado.Id);
                 }
-                cargar();
+                AppHelper.cargar(negocio, dgvArticulos, ref listaArticulos, pbUrlImagen);
             }
             catch (Exception ex)
             {
@@ -129,11 +121,16 @@ namespace presentacion
             }
         }
 
+
         private void btnFiltrar_Click(object sender, EventArgs e)
         {
-            ArticuloNegocio negocio = new ArticuloNegocio();
+            negocio = new ArticuloNegocio();
             try
             {
+                if (AppHelper.validarFiltro(cbCampo, cbCriterio, txtFiltro))
+                {
+                    return;
+                }
                 string campo = cbCampo.SelectedItem.ToString();
                 string criterio = cbCriterio.SelectedItem.ToString();
                 string filtro = txtFiltro.Text;
@@ -144,6 +141,32 @@ namespace presentacion
             {
                 MessageBox.Show(ex.ToString());
             }
+        }
+
+        private void btnVerDetalle_Click(object sender, EventArgs e)
+        {
+            negocio = new ArticuloNegocio();
+            Articulo seleccionado;
+            try
+            {
+                if (dgvArticulos.CurrentRow != null)
+                {
+                    seleccionado = (Articulo)dgvArticulos.CurrentRow.DataBoundItem;
+                    dgvArticulos.DataSource = listaArticulos = new List<Articulo> { seleccionado };
+                    AppHelper.columnas(dgvArticulos, true);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+        }
+
+        private void btnActualizar_Click(object sender, EventArgs e)
+        {
+            AppHelper.cargar(negocio, dgvArticulos, ref listaArticulos, pbUrlImagen);
         }
     }
 }
