@@ -18,6 +18,7 @@ namespace presentacion
     {
         private Articulo articulo = null;
         private OpenFileDialog archivo = null;
+        private string imgAnterior;
         public frmAltaArticulo()
         {
             InitializeComponent();
@@ -33,6 +34,15 @@ namespace presentacion
         {
             MarcaNegocio marcaNegocio = new MarcaNegocio();
             CategoriaNegocio categoriaNegocio = new CategoriaNegocio();
+            EstiloHelper.aplicarEstiloFormulario(
+                this,
+                new[] { lblCodigo, lblNombre, lblDescripcion, lblMarca, lblCategoria, lblImagenUrl, lblPrecio },
+                new[] { txtCodigo, txtNombre, txtDescripcion, txtImagenUrl, txtPrecio },
+                new[] { cboMarca, cboCategoria },
+                btnAceptar,
+                btnCancelar,
+                btnGuardarImagen);
+
             try
             {
                 cboMarca.DataSource = marcaNegocio.listar();
@@ -50,8 +60,9 @@ namespace presentacion
                     cboMarca.SelectedValue = articulo.MarcaArticulo.Id;
                     cboCategoria.SelectedValue = articulo.CategoriaArticulo.Id;
                     txtImagenUrl.Text = articulo.ImagenUrl;
-                    cargarImagen(articulo.ImagenUrl);
-                    txtPrecio.Text = articulo.Precio.ToString();
+                    imgAnterior = Path.GetFileName(articulo.ImagenUrl);
+                    AppHelper.cargarImagen(articulo.ImagenUrl, pbUrlImagen);
+                    txtPrecio.Text = articulo.Precio.ToString("F4");
                 }
 
             }
@@ -60,34 +71,38 @@ namespace presentacion
                 MessageBox.Show(ex.ToString());
             }
         }
-        private void cargarImagen(string imagen)
-        {
-            try
-            {
-                pbUrlImagen.Load(imagen);
-            }
-            catch (Exception)
-            {
-                pbUrlImagen.Load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmNYw9e9Y7rhqAKRQ3Lv7pFw0JJWdXj13WJA&s");
-            }
-        }
 
         private void btnAceptar_Click(object sender, EventArgs e)
         {
             ArticuloNegocio negocio = new ArticuloNegocio();
+            bool hayErrores = false;
+            bool validar = true;
             try
             {
                 if (articulo == null)
                     articulo = new Articulo();
 
-                articulo.Codigo = txtCodigo.Text;
-                articulo.Nombre = txtNombre.Text;
-                articulo.Descripcion = txtDescripcion.Text;
+                hayErrores |= AppHelper.validarCampos(valor => articulo.Codigo = valor, txtCodigo, lblErrorCodigo);
+                hayErrores |= AppHelper.validarCampos(valor => articulo.Nombre = valor, txtNombre, lblErrorNombre);
+                hayErrores |= AppHelper.validarCampos(valor => articulo.Descripcion = valor, txtDescripcion, lblErrorDescripcion);
+                hayErrores |= AppHelper.validarCampos(valor => articulo.ImagenUrl = valor, txtImagenUrl, lblErrorUrl);
+                hayErrores |= AppHelper.validarCampo(valor => articulo.Precio = decimal.Parse(valor), txtPrecio, lblErrorPrecio, validar);
+                if (hayErrores)
+                {
+                    return;
+                }
                 articulo.MarcaArticulo = (Marca)cboMarca.SelectedItem;
                 articulo.CategoriaArticulo = (Categoria)cboCategoria.SelectedItem;
-                articulo.ImagenUrl = txtImagenUrl.Text;
-                articulo.Precio = decimal.Parse(txtPrecio.Text);
 
+                if (archivo != null && !(txtImagenUrl.Text.ToUpper().Contains("HTTP")))
+                {
+
+                    if (articulo.Id != 0 && File.Exists(AppHelper.obtenerRutaImagen(imgAnterior)))
+                        File.Delete(AppHelper.obtenerRutaImagen(imgAnterior));
+
+                    File.Copy(archivo.FileName, AppHelper.obtenerRutaImagen(archivo.SafeFileName));
+
+                }
                 if (articulo.Id != 0)
                 {
                     negocio.modificar(articulo);
@@ -99,10 +114,6 @@ namespace presentacion
                     MessageBox.Show("Agregado Exitosamente");
                 }
 
-                if (archivo != null && !(txtImagenUrl.Text.ToUpper().Contains("HTTP")))
-                {
-                    File.Copy(archivo.FileName, ConfigurationManager.AppSettings["images-articles"] + archivo.SafeFileName);
-                }
                 Close();
             }
             catch (Exception ex)
@@ -119,7 +130,7 @@ namespace presentacion
 
         private void txtImagenUrl_Leave(object sender, EventArgs e)
         {
-            cargarImagen(txtImagenUrl.Text); 
+            AppHelper.cargarImagen(txtImagenUrl.Text, pbUrlImagen);
         }
 
         private void btnGuardarImagen_Click(object sender, EventArgs e)
@@ -131,7 +142,7 @@ namespace presentacion
                 if (archivo.ShowDialog() == DialogResult.OK)
                 {
                     txtImagenUrl.Text = archivo.FileName;
-                    cargarImagen(archivo.FileName);
+                    AppHelper.cargarImagen(archivo.FileName, pbUrlImagen);
                 }
             }
             catch (Exception ex)
