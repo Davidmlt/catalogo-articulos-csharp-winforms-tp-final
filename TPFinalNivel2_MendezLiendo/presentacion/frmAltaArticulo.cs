@@ -86,7 +86,7 @@ namespace presentacion
                 hayErrores |= AppHelper.validarCampos(valor => articulo.Nombre = valor, txtNombre, lblErrorNombre);
                 hayErrores |= AppHelper.validarCampos(valor => articulo.Descripcion = valor, txtDescripcion, lblErrorDescripcion);
                 hayErrores |= AppHelper.validarCampos(valor => articulo.ImagenUrl = valor, txtImagenUrl, lblErrorUrl);
-                hayErrores |= AppHelper.validarCampo(valor => articulo.Precio = decimal.Parse(valor), txtPrecio, lblErrorPrecio, validar);
+                hayErrores |= AppHelper.validarCampos(valor => articulo.Precio = decimal.Parse(valor), txtPrecio, lblErrorPrecio, validar);
                 if (hayErrores)
                 {
                     return;

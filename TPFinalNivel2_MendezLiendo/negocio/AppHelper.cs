@@ -124,7 +124,7 @@ namespace negocio
                 return false;
             }
         }
-        public static bool validarCampo(Action<string> valor, TextBox campo, Label error, bool validar = true)
+        public static bool validarCampos(Action<string> valor, TextBox campo, Label error, bool validar = true)
         {
             if (string.IsNullOrEmpty(campo.Text))
             {
