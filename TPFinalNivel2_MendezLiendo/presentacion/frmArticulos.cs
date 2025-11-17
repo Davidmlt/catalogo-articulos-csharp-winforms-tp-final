@@ -82,7 +82,7 @@ namespace presentacion
             try
             {
                 DialogResult resultado = MessageBox.Show("¿Desea eliminar el articulo?", "Eliminar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (resultado == DialogResult.Yes)
+                if (resultado == DialogResult.Yes && dgvArticulos.CurrentRow != null)
                 {
                     seleccionado = (Articulo)dgvArticulos.CurrentRow.DataBoundItem;
 
